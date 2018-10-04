@@ -9,10 +9,10 @@ import theatre.VectorTools._
 
 object Brain {
   def props(
-             boundaryFunction: Point => Boolean,
-             genome: Genome
+             genome: Genome,
+             boundaryFunction: Point => Boolean
            ): Props =
-    Props(new Brain(boundaryFunction, genome))
+    Props(new Brain(genome, boundaryFunction))
 
   def thereIsNeuroneAt(
                        position: Point,
@@ -32,9 +32,9 @@ object Brain {
 }
 
 class Brain(
-                   boundaryFunction: Point => Boolean,
-                   genome: Genome
-                 ) extends Actor with ActorLogging {
+             genome: Genome,
+             boundaryFunction: Point => Boolean
+           ) extends Actor with ActorLogging {
   var stemCellToActorRef: Map[String, ActorRef] = Map.empty[String, ActorRef]
 
   var takenPositions: List[Point] = Nil
