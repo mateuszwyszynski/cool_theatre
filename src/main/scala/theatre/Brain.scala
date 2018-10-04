@@ -3,7 +3,7 @@ package theatre
 import akka.actor._
 import theatre.Brain._
 import theatre.CPPN.StemCellReadyToUse
-import theatre.Neurone.LookingForConnections
+import theatre.Neurone.{LookForConnections, LookingForConnections}
 import theatre.Stem.ReportStatus
 import theatre.VectorTools._
 
@@ -83,6 +83,13 @@ class Brain(
         stemCellActor.forward(msg)
       }
     }
+
+    case msg: LookForConnections =>
+      for {
+        stemCellActor <- stemCellToActorRef.values
+      } yield {
+        stemCellActor ! msg
+      }
 
     case msg @ StemCellReadyToUse(_, _, _) => {
       brainsCPPN ! msg

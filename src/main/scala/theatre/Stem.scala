@@ -77,7 +77,7 @@ class Stem(
         }
       }
 
-    case msg @ LookForConnections() =>
+    case msg: LookForConnections =>
       for {
         child <- context.children
       } yield {
