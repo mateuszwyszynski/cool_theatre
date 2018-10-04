@@ -78,7 +78,7 @@ class Neurone(
               propagateSignalToOutputNeurones(outNeurones, processingFunction(neuroneState.map(x => x._2).sum))
               neuroneState = Nil
             case false =>
-              log.info("Neurone was not fired.")
+              //log.info("Neurone was not fired.")
           }
         case None => {
           log.info(s"No output neurones. Nowhere to propagate signal = $value")
@@ -87,10 +87,10 @@ class Neurone(
 
     case LookingForConnections(pos, axonCoor) =>
     if (segmentIntersectsBall(pos, add(pos,axonCoor), neuroneCoordinates, inputRadius) && sender != self) {
-      log.info("New input neurone:" + sender + "Sending my coordinates.")
+      log.info("Recognized an input neurone:" + sender + "Sending my coordinates.")
       sender() ! EstablishConnection()
     } else {
-      log.info("Shouldn't connect to this neurone")
+      //log.info("Shouldn't connect to this neurone")
     }
 
     case EstablishConnection() => outputNeurones match {

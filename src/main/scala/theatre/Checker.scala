@@ -42,12 +42,12 @@ class Checker(
         context.parent ! CheckStemCells()
         neuroneState = Nil
       } else {
-          log.info("Checker neurone wasn't fired.")
+          //log.info("Checker neurone wasn't fired.")
       }
 
     case LookingForConnections(pos, axonCoor) =>
       if (segmentIntersectsBall(pos, add(pos,axonCoor), neuroneCoordinates, inputRadius) && sender != self) {
-        log.info("New input neurone:" + sender + " Sending my coordinates.")
+        log.info("Recognized an input neurone:" + sender + "Sending my coordinates.")
         sender() ! EstablishConnection()
       } else {
         log.info("Shouldn't connect to this neurone")

@@ -126,9 +126,10 @@ class CPPNQuery(
         val procFun: Double => Double = sigmoidalFunction
         val threshold: Double = collectedOutputs(14)
         if(collectedOutputs(5) <= 0.75) {
-          log.info("pos: {}, ax: {}, inpR: {}, thr: {}", position,axCoor,inpRad,threshold)
+          log.info("New neurone cell - pos: {}, ax: {}, inpR: {}, thr: {}", position,axCoor,inpRad,threshold)
           context.parent ! Create(NeuroneCell(position, axCoor, inpRad, procFun, threshold), stemCellID)
         } else {
+          log.info("New checker cell - pos: {}, ax: {}, inpR: {}, thr: {}", position,axCoor,inpRad,threshold)
           context.parent ! Create(CheckerCell(position, inpRad, procFun, threshold), stemCellID)
         }
         collectedOutputs = Map.empty[Int, Double]
