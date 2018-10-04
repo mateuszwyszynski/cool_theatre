@@ -18,16 +18,24 @@ class CPPN(
           )
   extends Actor
   with ActorLogging {
+  var stemCellIDToQueryActorRef: Map[String, ActorRef] = Map.empty[String, ActorRef]
+
   def receive: Receive = {
     case msg @ StemCellReadyToUse(_, resources, stemCellID) =>
       if(resources <= 0) {
         log.info(s"No more resources in the stem cell $stemCellID")
       } else {
-        log.info("Creating query actor")
-        val queryActor: ActorRef =
-          context.actorOf(CPPNQuery.props(genome, stemCellID), "CPPNQueryFor" + stemCellID)
+        stemCellIDToQueryActorRef.get(stemCellID) match {
+          case None =>
+            log.info("Creating query actor")
+            val queryActor: ActorRef =
+              context.actorOf(CPPNQuery.props(genome, stemCellID), "CPPNQueryFor" + stemCellID)
+            queryActor ! msg
+            stemCellIDToQueryActorRef += stemCellID -> queryActor
 
-        queryActor ! msg
+          case Some(queryActor) =>
+            queryActor ! msg
+        }
       }
     case msg: Create =>
       context.parent ! msg

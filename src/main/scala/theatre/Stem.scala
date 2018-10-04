@@ -25,6 +25,7 @@ class Stem(
           ) extends Actor with ActorLogging {
   var resources: Double = neuroneMaterial
   var neuroneNumber: BigInt = 1
+  var checkersNumber: Int = 1
 
   def receive: Receive = {
     case Create(cell, _) =>
@@ -52,7 +53,22 @@ class Stem(
           context.actorOf(Output.props(output.position, output.inputRadius))
 
         case checker: CheckerCell =>
-          log.info("Checker Cells are not yet implemented.")
+          val neuroneActor =
+            context.actorOf(
+              Checker.props(
+                checker.position,
+                checker.inputRadius,
+                checker.processingFunction,
+                checker.firingThreshold
+              ),
+              "Checker" + checkersNumber
+            )
+
+          resources -= 1
+
+          checkersNumber += 1
+
+          neuroneActor.tell(LookForConnections(), context.parent)
       }
 
     case msg @ LookForConnections() =>

@@ -64,7 +64,11 @@ class Brain(
             case None => log.info("Unknown stem cell ID.")
           }
         }
-        case checker: CheckerCell => {}
+        case checker: CheckerCell =>
+          stemCellToActorRef.get(stemCellID) match {
+            case Some(stem) => stem ! msg
+            case None => log.info("Unknown stem cell ID.")
+          }
       }
     }
 
