@@ -26,6 +26,7 @@ class Stem(
   var resources: Double = neuroneMaterial
   var neuroneNumber: BigInt = 1
   var checkersNumber: Int = 1
+  var outputsNumber: Int = 1
 
   def receive: Receive = {
     case Create(cell, _) =>
@@ -53,7 +54,8 @@ class Stem(
             neuroneActor.tell(LookForConnections(), context.parent)
 
           case output: OutputCell =>
-            context.actorOf(Output.props(output.position, output.inputRadius))
+            context.actorOf(Output.props(output.position, output.inputRadius), "Output" + outputsNumber)
+            outputsNumber += 1
 
           case checker: CheckerCell =>
             val neuroneActor =
