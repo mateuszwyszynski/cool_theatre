@@ -37,7 +37,9 @@ class CPPN(
             queryActor ! msg
         }
       }
-    case msg: Create =>
-      context.parent ! msg
+    case msg @ Create(cell, _) =>
+      if(boundaryFun(cell.position)) {
+        context.parent ! msg
+      } else {}
   }
 }
