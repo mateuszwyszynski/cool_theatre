@@ -211,7 +211,7 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
   }
 
   "CPPN actor" should {
-    "create a checker cell (NOT ALWAYS)" in {
+    "create a checker cell (NOT ALWAYS)" ignore {
       val probe = TestProbe()
 
       val cppnActor = probe.childActorOf(CPPN.props(cubeInterior, genome), "CPPNActor")
@@ -222,7 +222,7 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
 
       response.cell.isInstanceOf[CheckerCell] should equal(true)
     }
-    "create a neurone cell (NOT ALWAYS)" in {
+    "create a neurone cell (NOT ALWAYS)" ignore {
       val probe = TestProbe()
 
       val cppnActor = probe.childActorOf(CPPN.props(cubeInterior, genome), "CPPNActor")
