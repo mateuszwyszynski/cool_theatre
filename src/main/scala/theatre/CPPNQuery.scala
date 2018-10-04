@@ -98,15 +98,15 @@ class CPPNQuery(
       collectedOutputs = outputNodesNumbers.get(sender) match {
         case Some(n) => n match {
           case 5 => collectedOutputs.updated(5, v)
-          case 6 => collectedOutputs.updated(6, v)
-          case 7 => collectedOutputs.updated(7, v)
-          case 8 => collectedOutputs.updated(8, v)
-          case 9 => collectedOutputs.updated(9, v)
-          case 10 => collectedOutputs.updated(10, v)
-          case 11 => collectedOutputs.updated(11, v)
-          case 12 => collectedOutputs.updated(12, v)
+          case 6 => collectedOutputs.updated(6, (v-0.5)/(0.5) * 1)
+          case 7 => collectedOutputs.updated(7, (v-0.5)/(0.5) * 1)
+          case 8 => collectedOutputs.updated(8, (v-0.5)/(0.5) * 1)
+          case 9 => collectedOutputs.updated(9, (v-0.5)/(0.5) * 1)
+          case 10 => collectedOutputs.updated(10, (v-0.5)/(0.5) * 2 - 1)
+          case 11 => collectedOutputs.updated(11, (v-0.5)/(0.5) * 2 - 1)
+          case 12 => collectedOutputs.updated(12, (v-0.5)/(0.5) * 2 - 1)
           case 13 => collectedOutputs.updated(13, v)
-          case 14 => collectedOutputs.updated(14, v)
+          case 14 => collectedOutputs.updated(14, (v-0.5)/(0.5) * 1)
           case 15 => collectedOutputs.updated(15, v)
           case _ =>
             log.info("Error: to many output nodes on the list, {}", sender)
