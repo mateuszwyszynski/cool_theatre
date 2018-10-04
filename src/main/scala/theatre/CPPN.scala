@@ -1,7 +1,7 @@
 package theatre
 
 import akka.actor._
-import theatre.Brain.Create
+import theatre.Brain.{Create, KillCPPNQuery}
 import theatre.CPPN._
 import theatre.VectorTools._
 
@@ -41,5 +41,11 @@ class CPPN(
       if(boundaryFun(cell.position)) {
         context.parent ! msg
       } else {}
+
+    case KillCPPNQuery(stemID) =>
+      stemCellIDToQueryActorRef.get(stemID) match {
+        case None =>
+        case Some(x) => x ! PoisonPill
+      }
   }
 }

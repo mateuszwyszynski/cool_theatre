@@ -29,46 +29,50 @@ class Stem(
 
   def receive: Receive = {
     case Create(cell, _) =>
-      cell match {
-        case neurone: NeuroneCell =>
-          val neuroneActor =
-            context.actorOf(
-              Neurone.props(
-                neurone.position,
-                neurone.axonCoordinates,
-                neurone.inputRadius,
-                neurone.processingFunction,
-                neurone.firingThreshold
-              ),
-              "Neurone" + neuroneNumber
-            )
+      if(resources <= 0) {
+        context.parent ! KillCPPNQuery(stemCellID)
+      } else {
+        cell match {
+          case neurone: NeuroneCell =>
+            val neuroneActor =
+              context.actorOf(
+                Neurone.props(
+                  neurone.position,
+                  neurone.axonCoordinates,
+                  neurone.inputRadius,
+                  neurone.processingFunction,
+                  neurone.firingThreshold
+                ),
+                "Neurone" + neuroneNumber
+              )
 
-          resources -= 1
+            resources -= 1
 
-          neuroneNumber += 1
+            neuroneNumber += 1
 
-          neuroneActor.tell(LookForConnections(), context.parent)
+            neuroneActor.tell(LookForConnections(), context.parent)
 
-        case output: OutputCell =>
-          context.actorOf(Output.props(output.position, output.inputRadius))
+          case output: OutputCell =>
+            context.actorOf(Output.props(output.position, output.inputRadius))
 
-        case checker: CheckerCell =>
-          val neuroneActor =
-            context.actorOf(
-              Checker.props(
-                checker.position,
-                checker.inputRadius,
-                checker.processingFunction,
-                checker.firingThreshold
-              ),
-              "Checker" + checkersNumber
-            )
+          case checker: CheckerCell =>
+            val neuroneActor =
+              context.actorOf(
+                Checker.props(
+                  checker.position,
+                  checker.inputRadius,
+                  checker.processingFunction,
+                  checker.firingThreshold
+                ),
+                "Checker" + checkersNumber
+              )
 
-          resources -= 1
+            resources -= 1
 
-          checkersNumber += 1
+            checkersNumber += 1
 
-          neuroneActor.tell(LookForConnections(), context.parent)
+            neuroneActor.tell(LookForConnections(), context.parent)
+        }
       }
 
     case msg @ LookForConnections() =>

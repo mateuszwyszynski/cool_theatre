@@ -27,6 +27,8 @@ object Brain {
                          )
 
   final case class CheckStemCells()
+
+  final case class KillCPPNQuery(stemCellID: String)
 }
 
 class Brain(
@@ -92,6 +94,10 @@ class Brain(
       } yield {
         stemCellActor ! ReportStatus()
       }
+    }
+
+    case msg: KillCPPNQuery => {
+      brainsCPPN ! msg
     }
   }
 }
