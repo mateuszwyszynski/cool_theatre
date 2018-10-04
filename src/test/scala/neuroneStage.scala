@@ -299,6 +299,10 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
     Thread.sleep(100)
 
     inputNeurone ! Signal(2)
+
+    Thread.sleep(100)
+
+    brain ! LookForConnections()
   }
 
   "Genome" ignore {
