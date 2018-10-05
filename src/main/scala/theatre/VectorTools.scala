@@ -2,6 +2,8 @@ package theatre
 
 import Genes._
 
+import scala.util.Sorting.stableSort
+
 object VectorTools {
   type Point = (Double, Double, Double)
 
@@ -125,4 +127,7 @@ object VectorTools {
     } yield {
       ConnectionGene(input, output, 1.0, enabled = true)
     }
+
+  def sortByReward(evaluatedGenomes: List[(Genome, Double)]): List[(Genome, Double)] =
+    stableSort(evaluatedGenomes, (e1: (Genome, Double), e2: (Genome, Double)) => e1._2 > e2._2).toList
 }

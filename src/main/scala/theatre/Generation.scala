@@ -2,27 +2,29 @@ package theatre
 
 import akka.actor.{Actor, ActorLogging, Props}
 import theatre.Generation.{Evaluate, Evaluated}
-import theatre.VectorTools.Point
+import theatre.VectorTools.{Point, sortByReward}
 
 object Generation {
   def props(generationNumber: Int): Props = Props(new Generation(generationNumber))
 
   final case class Evaluate(genomes: List[Genome], boundaryFunction: Point => Boolean)
-  final case class Evaluated(rewards: List[Double])
+  final case class Evaluated(rewards: List[(Genome, Double)])
 }
 
 class Generation(generationNumber: Int) extends Actor with ActorLogging {
   def receive: Receive = {
     case Evaluate(genomes, boundaryFunction) =>
-      val collectedRewards: List[Double] =
+      val evaluatedGenomes: List[(Genome, Double)] =
         for {
           genome <- genomes
         } yield {
           val brain = context.actorOf(Brain.props(genome, boundaryFunction))
-
-          1.0
+          (genome, 1.0)
         }
 
-      context.parent ! Evaluated(collectedRewards)
+      val genomesSortedByReward: List[(Genome, Double)] =
+        sortByReward(evaluatedGenomes)
+
+      context.parent ! Evaluated(genomesSortedByReward.take(10))
   }
 }
