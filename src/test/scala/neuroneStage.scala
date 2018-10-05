@@ -327,6 +327,15 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
     genome3 == genome5
   }
 
+  "List of genomes with rewards List((genome,2.0), (genome, 3.0), (genome, 1.0))" should {
+    "be equal to List((genome,3.0), (genome, 2.0), (genome, 1.0)) after sorting" in {
+      val genomesUnsorted: List[(Genome, Double)] = List((genome,2.0), (genome, 3.0), (genome, 1.0))
+      val genomesSorted: List[(Genome, Double)] = List((genome,3.0), (genome, 2.0), (genome, 1.0))
+
+      sortByReward(genomesUnsorted) should equal (genomesSorted)
+    }
+  }
+
   "Projection on a segment" should {
     "be equal (0.5, 0.0, 0.0)" in {
       projectOnSegment((0.5, 0, 1.5), (0.5, 0, -1.5), zeroVec) should equal((0.5, 0.0, 0.0))
