@@ -187,4 +187,55 @@ class Genomes extends Matchers
       }
     }
   }
+
+  "Adding new node gene to a genome" should {
+    "yield the same genome" when {
+      "there is no such connection in genome" in {
+        val connections: List[ConnectionGene] =
+          List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 1.0, enabled = false),
+            ConnectionGene(2, 4, 1.0, enabled = true))
+
+        val nodes: Map[Int, NodeGene] =
+          Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.6)), (4, HiddenGene(0.7)))
+
+        val genome: Genome = Genome(nodes, connections)
+
+        genome.addNodeAtConnection(4, 3, 0.7) should equal(genome)
+      }
+
+      "specified connection is disabled" in {
+        val connections: List[ConnectionGene] =
+          List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 1.0, enabled = false),
+            ConnectionGene(2, 4, 1.0, enabled = true))
+
+        val nodes: Map[Int, NodeGene] =
+          Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, HiddenGene(0.7)))
+
+        val genome: Genome = Genome(nodes, connections)
+
+        genome.addNodeAtConnection(2, 3, 0.5) should equal(genome)
+      }
+    }
+
+    "yield a genome with new node at specified connection" in {
+      val connections: List[ConnectionGene] =
+        List(ConnectionGene(1, 3, 0.7, enabled = true), ConnectionGene(2, 3, 1.0, enabled = true))
+
+      val nodes: Map[Int, NodeGene] =
+        Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)))
+
+      val genome: Genome = Genome(nodes, connections)
+
+      val resultConns: List[ConnectionGene] =
+        List(ConnectionGene(1, 3, 0.7, enabled = false), ConnectionGene(2, 3, 1.0, enabled = true),
+          ConnectionGene(1, 4, 1.0, enabled = true), ConnectionGene(4, 3, 0.7, enabled = true))
+
+      val resultNodes: Map[Int, NodeGene] =
+        Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, HiddenGene(0.4)))
+
+      val resultGenome: Genome = Genome(resultNodes, resultConns)
+
+      genome.addNodeAtConnection(1, 3, 0.4) should equal(resultGenome)
+    }
+  }
 }
