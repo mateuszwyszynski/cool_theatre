@@ -1,13 +1,14 @@
 package theatre
 
 import Genes._
+import VectorTools.crossOverGenomesAt
 
 object Genome {
   def apply(nodeGenes: Map[Int, NodeGene], connectionGenes: List[ConnectionGene]): Genome =
     new Genome(nodeGenes, connectionGenes)
 }
 
-class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[ConnectionGene]) {
+case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[ConnectionGene]) {
   val activeConnections: List[ConnectionGene] = connectionGenes.filter(x => x.enabled)
 
   val numberOfConnections: Int = connectionGenes.length
@@ -115,97 +116,8 @@ class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[ConnectionGene
   }
 
   def mateWith(genome: Genome): Genome = {
-    val split: Int = randomizer.nextInt(this.numberOfConnections + genome.numberOfConnections)
+    val split: Int = randomizer.nextInt(this.numberOfConnections + genome.numberOfConnections + 1)
 
-    val parent1: Genome =
-      if(split <= this.numberOfConnections) {
-        this
-      } else {
-        genome
-      }
-
-    val parent2: Genome =
-      if(split <= this.numberOfConnections) {
-        genome
-      } else {
-        this
-      }
-
-
-    val headConnections: List[ConnectionGene] = parent1.connections().take(split)
-
-    val tailConnections: List[ConnectionGene] = parent2.connections().drop(split)
-
-    def determineNodes(
-                        connections: List[ConnectionGene],
-                        knownNodes: Map[Int, NodeGene],
-                        parentNodes: Map[Int, NodeGene]
-                      ): Map[Int, NodeGene] = {
-      def determineAccumulator(connections: List[ConnectionGene], acc: Map[Int, NodeGene]): Map[Int, NodeGene] =
-        connections match {
-          case Nil => acc
-          case x :: xs =>
-            val accWithUpdatedInput: Map[Int, NodeGene] = acc.get(x.input) match {
-              case Some(_) => acc
-              case None =>
-                parentNodes.get(x.input) match {
-                  case Some(node) => node match {
-                    case OutputGene(b) =>
-                      acc.updated(x.input, ParameterGene(b))
-                    case HiddenGene(b) =>
-                      acc.updated(x.input, ParameterGene(b))
-                    case ParameterGene(b) =>
-                      acc.updated(x.input, ParameterGene(b))
-                    case SensorGene() =>
-                      acc.updated(x.input, SensorGene())
-                  }
-                  case None =>
-                    println("Unexpected behaviour at input {}: unknown NodeGene.", x.input)
-                    acc
-                }
-            }
-
-            val accWithUpdatedOutput: Map[Int, NodeGene] = accWithUpdatedInput.get(x.output) match {
-              case Some(node) => node match {
-                case ParameterGene(base) => accWithUpdatedInput.updated(x.output, HiddenGene(base))
-                case _ => accWithUpdatedInput
-              }
-              case None =>
-                parentNodes.get(x.output) match {
-                  case Some(node) => node match {
-                    case o: OutputGene =>
-                      accWithUpdatedInput.updated(x.output, o)
-                    case h: HiddenGene =>
-                      accWithUpdatedInput.updated(x.output, h)
-                    case ParameterGene(b) =>
-                      accWithUpdatedInput.updated(x.output, HiddenGene(b))
-                    case s: SensorGene =>
-                      println("Unexpected behaviour (?): sensor gene treated as output.")
-                      accWithUpdatedInput.updated(x.output, s)
-                  }
-                  case None =>
-                    println("Unexpected behaviour at output {}: yet unknown NodeGene.", x.output)
-                    accWithUpdatedInput
-                }
-            }
-
-            determineAccumulator(xs, accWithUpdatedOutput)
-        }
-
-      determineAccumulator(connections, knownNodes)
-    }
-
-    Genome(
-      determineNodes(
-        tailConnections.filter(x => x.enabled),
-        determineNodes(
-          headConnections.filter(x => x.enabled),
-          Map.empty[Int, NodeGene],
-          parent1.nodes()
-        ),
-        parent2.nodes()
-      ),
-      headConnections ::: tailConnections
-    )
+    crossOverGenomesAt(this, genome, split)
   }
 }
