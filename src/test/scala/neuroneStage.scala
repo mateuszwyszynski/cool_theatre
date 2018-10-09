@@ -305,28 +305,6 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
     brain ! LookForConnections()
   }
 
-  "Genome" ignore {
-    val sensor1: NodeGene = SensorGene()
-    val sensor2: NodeGene = SensorGene()
-
-    val output: NodeGene = OutputGene(0.0)
-
-    val connection1: ConnectionGene = ConnectionGene(1, 3, 0.1, enabled = true)
-    val connection2: ConnectionGene = ConnectionGene(2, 3, 0.2, enabled = true)
-
-    val genome1: Genome = Genome(Map((1,sensor1), (2,sensor2), (3, output)), List(connection1, connection2))
-
-    val genome2: Genome = genome1.generateNewNode()
-
-    val genome3: Genome = genome2.generateNewNode()
-
-    val genome4: Genome = genome1.generateNewNode()
-
-    val genome5: Genome = genome4.generateNewNode()
-
-    genome3 == genome5
-  }
-
   "List of genomes with rewards List((genome,2.0), (genome, 3.0), (genome, 1.0))" should {
     "be equal to List((genome,3.0), (genome, 2.0), (genome, 1.0)) after sorting" in {
       val genomesUnsorted: List[(Genome, Double)] = List((genome,2.0), (genome, 3.0), (genome, 1.0))
