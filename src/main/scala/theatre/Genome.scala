@@ -21,36 +21,59 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
   def nodes(): Map[Int, NodeGene] = nodeGenes
   def connections(): List[ConnectionGene] = connectionGenes
 
+  private def findActiveConnection(edge: (Int, Int)): Option[ConnectionGene] = {
+    def findConnectionAcc(edge: (Int, Int), connectionGenes: List[ConnectionGene]): Option[ConnectionGene] =
+      connectionGenes match {
+        case x :: xs =>
+          if(x.input == edge._1 && x.output == edge._2) {
+            Some(x)
+          } else {
+            findConnectionAcc(edge, xs)
+          }
+        case Nil => None
+      }
+
+    findConnectionAcc(edge, this.activeConnections)
+  }
+
+  def addNodeAtConnection(input: Int, output: Int, baseValue: Double): Genome =
+    findActiveConnection((input, output)) match {
+    case Some(c) => {
+      val createdNode: NodeGene = HiddenGene(baseValue)
+
+      val newNodeGenes: Map[Int, NodeGene] = nodeGenes.updated(numberOfNodes + 1, createdNode)
+
+      val incomingConnection: ConnectionGene =
+        ConnectionGene(
+          c.input,
+          numberOfNodes + 1,
+          1,
+          enabled = true
+        )
+
+      val outgoingConnection: ConnectionGene =
+        ConnectionGene(
+          numberOfNodes + 1,
+          c.output,
+          c.weight,
+          enabled = true
+        )
+
+      val newConnectionGenes: List[ConnectionGene] =
+        connectionGenes.map(x => x.disableIfLike(c)) :::
+          List(incomingConnection, outgoingConnection)
+
+      Genome(newNodeGenes, newConnectionGenes)
+    }
+    case None => this
+  }
+
   def generateNewNode(): Genome = {
     val connectionToSplitIndex: Int = randomizer.nextInt(numberOfActiveConnections)
 
-    val createdNode: NodeGene = HiddenGene(randomizer.nextDouble())
-
-    val newNodeGenes: Map[Int, NodeGene] = nodeGenes.updated(numberOfNodes + 1, createdNode)
-
     val connectionToSplit: ConnectionGene = activeConnections(connectionToSplitIndex)
 
-    val incomingConnection: ConnectionGene =
-      ConnectionGene(
-        connectionToSplit.input,
-        numberOfNodes + 1,
-        1,
-        enabled = true
-      )
-
-    val outgoingConnection: ConnectionGene =
-      ConnectionGene(
-        numberOfNodes + 1,
-        connectionToSplit.output,
-        connectionToSplit.weight,
-        enabled = true
-      )
-
-    val newConnectionGenes: List[ConnectionGene] =
-      connectionGenes.map(x => x.disableIfLike(connectionToSplit)) :::
-        List(incomingConnection, outgoingConnection)
-
-    Genome(newNodeGenes, newConnectionGenes)
+    addNodeAtConnection(connectionToSplit.input, connectionToSplit.output, randomizer.nextDouble())
   }
 
   def generateNewConnection(): Genome = {
@@ -74,15 +97,8 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
           case Nil => false
         }
 
-      def connectionIsPresent(edge: (Int, Int), connectionGenes: List[ConnectionGene]): Boolean =
-        connectionGenes match {
-          case x :: xs =>
-            (x.input == edge._1 && x.output == edge._2 && x.enabled) || alreadyHasThisGene(edge, xs)
-          case Nil => false
-        }
-
       val possibleNewConnections: Seq[(Int, Int)] =
-        fullGraph.filter(x => !connectionIsPresent(x, connectionGenes))
+        fullGraph.filter(x => !alreadyHasThisGene(x, connectionGenes))
 
       val newConnectionIndex: Int = randomizer.nextInt(possibleNewConnections.length)
 
