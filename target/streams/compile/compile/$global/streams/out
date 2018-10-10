@@ -1,5 +1,0 @@
-[0m[[0m[33mwarn[0m] [0m[0m/Users/Mateusz/Programming/Eclipse/EPANNs/mastersAlgorithm/src/main/scala/theatre/Genome.scala:113:50: match may not be exhaustive.[0m
-[0m[[0m[33mwarn[0m] [0m[0mIt would fail on the following input: None[0m
-[0m[[0m[33mwarn[0m] [0m[0m            val nextAcc = accWithUpdatedInput.get(x.output) match {[0m
-[0m[[0m[33mwarn[0m] [0m[0m                                                 ^[0m
-[0m[[0m[33mwarn[0m] [0m[0mone warning found[0m
