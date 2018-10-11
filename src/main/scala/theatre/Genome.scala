@@ -36,11 +36,17 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
     findConnectionAcc(edge, this.activeConnections)
   }
 
-  private def findConnection(edge: (Int, Int)): Option[ConnectionGene] = {
+  private def findConnection(edge: (Int, Int), shouldBeActive: Boolean): Option[ConnectionGene] = {
     def findConnectionAcc(edge: (Int, Int), connectionGenes: List[ConnectionGene]): Option[ConnectionGene] =
       connectionGenes match {
+        case x :: xs if(shouldBeActive) =>
+          if(x.input == edge._1 && x.output == edge._2 && x.enabled) {
+            Some(x)
+          } else {
+            findConnectionAcc(edge, xs)
+          }
         case x :: xs =>
-          if(x.input == edge._1 && x.output == edge._2) {
+          if(x.input == edge._1 && x.output == edge._2 && !x.enabled) {
             Some(x)
           } else {
             findConnectionAcc(edge, xs)
@@ -92,7 +98,7 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
   }
 
   def addConnectionBetween(input: Int, output: Int, weight: Double): Genome = {
-    findConnection(input, output) match {
+    findConnection((input, output), shouldBeActive = false) match {
       case Some(c) =>
         if (c.enabled) {
           Genome(nodeGenes, connectionGenes :+ ConnectionGene(input, output, weight, enabled = true))
