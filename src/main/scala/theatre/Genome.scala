@@ -21,21 +21,6 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
   def nodes(): Map[Int, NodeGene] = nodeGenes
   def connections(): List[ConnectionGene] = connectionGenes
 
-  private def findActiveConnection(edge: (Int, Int)): Option[ConnectionGene] = {
-    def findConnectionAcc(edge: (Int, Int), connectionGenes: List[ConnectionGene]): Option[ConnectionGene] =
-      connectionGenes match {
-        case x :: xs =>
-          if(x.input == edge._1 && x.output == edge._2) {
-            Some(x)
-          } else {
-            findConnectionAcc(edge, xs)
-          }
-        case Nil => None
-      }
-
-    findConnectionAcc(edge, this.activeConnections)
-  }
-
   private def findConnection(edge: (Int, Int), shouldBeActive: Boolean): Option[ConnectionGene] = {
     def findConnectionAcc(edge: (Int, Int), connectionGenes: List[ConnectionGene]): Option[ConnectionGene] =
       connectionGenes match {
@@ -58,7 +43,7 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
   }
 
   def addNodeAtConnection(input: Int, output: Int, baseValue: Double): Genome =
-    findActiveConnection((input, output)) match {
+    findConnection((input, output), shouldBeActive = true) match {
     case Some(c) =>
       val createdNode: NodeGene = HiddenGene(baseValue)
 
