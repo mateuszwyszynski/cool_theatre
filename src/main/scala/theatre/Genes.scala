@@ -47,4 +47,7 @@ object Genes {
       } else this
     }
   }
+
+  final case class WrongConnectionGene(private val msg: String = "", private val cause: Throwable = None.orNull)
+    extends Exception(msg, cause)
 }

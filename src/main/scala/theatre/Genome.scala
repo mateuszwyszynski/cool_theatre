@@ -36,6 +36,21 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
     findConnectionAcc(edge, this.activeConnections)
   }
 
+  private def findConnection(edge: (Int, Int)): Option[ConnectionGene] = {
+    def findConnectionAcc(edge: (Int, Int), connectionGenes: List[ConnectionGene]): Option[ConnectionGene] =
+      connectionGenes match {
+        case x :: xs =>
+          if(x.input == edge._1 && x.output == edge._2) {
+            Some(x)
+          } else {
+            findConnectionAcc(edge, xs)
+          }
+        case Nil => None
+      }
+
+    findConnectionAcc(edge, connectionGenes)
+  }
+
   def addNodeAtConnection(input: Int, output: Int, baseValue: Double): Genome =
     findActiveConnection((input, output)) match {
     case Some(c) => {
@@ -74,6 +89,36 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
     val connectionToSplit: ConnectionGene = activeConnections(connectionToSplitIndex)
 
     addNodeAtConnection(connectionToSplit.input, connectionToSplit.output, randomizer.nextDouble())
+  }
+
+  def addConnectionBetween(input: Int, output: Int, weight: Double): Genome = {
+    findConnection(input, output) match {
+      case Some(c) =>
+        if (c.enabled) {
+          Genome(nodeGenes, connectionGenes :+ ConnectionGene(input, output, weight, enabled = true))
+        } else {
+          val disabledConnectionIndex: Int =
+            connectionGenes.indexWhere(x => !x.enabled && x.input == c.input && x.output == c.output)
+
+          val connections: List[ConnectionGene] =
+            (connectionGenes.take(disabledConnectionIndex) :+
+            ConnectionGene(input, output, weight, enabled = true)) :::
+            connectionGenes.drop(disabledConnectionIndex + 1)
+
+          Genome(nodeGenes, connections)
+        }
+      case None =>
+        (nodeGenes.get(input), nodeGenes.get(output)) match {
+          case (Some(_), Some(_)) =>
+            Genome(nodeGenes, connectionGenes :+ ConnectionGene(input, output, weight, enabled = true))
+          case (None, Some(_)) =>
+            throw new WrongConnectionGene("No node found within the genome for the specified input.")
+          case (Some(_), None) =>
+            throw new WrongConnectionGene("No node found within the genome for the specified output.")
+          case _ =>
+            throw new WrongConnectionGene("No nodes found within the genome for both input and output.")
+        }
+    }
   }
 
   def generateNewConnection(): Genome = {
