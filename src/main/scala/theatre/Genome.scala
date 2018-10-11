@@ -39,7 +39,7 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
   private def findConnection(edge: (Int, Int), shouldBeActive: Boolean): Option[ConnectionGene] = {
     def findConnectionAcc(edge: (Int, Int), connectionGenes: List[ConnectionGene]): Option[ConnectionGene] =
       connectionGenes match {
-        case x :: xs if(shouldBeActive) =>
+        case x :: xs if shouldBeActive =>
           if(x.input == edge._1 && x.output == edge._2 && x.enabled) {
             Some(x)
           } else {
@@ -59,7 +59,7 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
 
   def addNodeAtConnection(input: Int, output: Int, baseValue: Double): Genome =
     findActiveConnection((input, output)) match {
-    case Some(c) => {
+    case Some(c) =>
       val createdNode: NodeGene = HiddenGene(baseValue)
 
       val newNodeGenes: Map[Int, NodeGene] = nodeGenes.updated(numberOfNodes + 1, createdNode)
@@ -85,7 +85,7 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
           List(incomingConnection, outgoingConnection)
 
       Genome(newNodeGenes, newConnectionGenes)
-    }
+
     case None => this
   }
 
@@ -118,11 +118,11 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
           case (Some(_), Some(_)) =>
             Genome(nodeGenes, connectionGenes :+ ConnectionGene(input, output, weight, enabled = true))
           case (None, Some(_)) =>
-            throw new WrongConnectionGene("No node found within the genome for the specified input.")
+            throw WrongConnectionGene("No node found within the genome for the specified input.")
           case (Some(_), None) =>
-            throw new WrongConnectionGene("No node found within the genome for the specified output.")
+            throw WrongConnectionGene("No node found within the genome for the specified output.")
           case _ =>
-            throw new WrongConnectionGene("No nodes found within the genome for both input and output.")
+            throw WrongConnectionGene("No nodes found within the genome for both input and output.")
         }
     }
   }
