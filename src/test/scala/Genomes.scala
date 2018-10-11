@@ -310,7 +310,8 @@ class Genomes extends Matchers
     }
 
     "enable and change weight of the first disabled connection with the same input and output and" +
-      "do not change any enabled connections with the same input and output" in {
+      "do not change any enabled connections with the same input and output" +
+      "which are farther in the genome then the disabled connection" in {
       val connections: List[ConnectionGene] =
         List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 1.0, enabled = false),
           ConnectionGene(2, 4, 1.0, enabled = true), ConnectionGene(4, 3, 1.0, enabled = true),
@@ -325,6 +326,32 @@ class Genomes extends Matchers
         List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 0.5, enabled = true),
           ConnectionGene(2, 4, 1.0, enabled = true), ConnectionGene(4, 3, 1.0, enabled = true),
           ConnectionGene(2, 3, 0.7, enabled = true), ConnectionGene(2, 3, 0.6, enabled = true))
+
+      val resultNodes: Map[Int, NodeGene] =
+        Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, HiddenGene(0.4)))
+
+      val resultGenome: Genome = Genome(resultNodes, resultConns)
+
+      genome.addConnectionBetween(2, 3, 0.5) should equal(resultGenome)
+    }
+
+    "enable and change weight of the first disabled connection with the same input and output and" +
+      "do not change any enabled connections with the same input and output" +
+      "which are placed before the disabled connection in the genome" in {
+      val connections: List[ConnectionGene] =
+        List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 1.0, enabled = true),
+          ConnectionGene(2, 4, 1.0, enabled = true), ConnectionGene(4, 3, 1.0, enabled = true),
+          ConnectionGene(2, 3, 0.7, enabled = true), ConnectionGene(2, 3, 0.6, enabled = false))
+
+      val nodes: Map[Int, NodeGene] =
+        Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, HiddenGene(0.4)))
+
+      val genome: Genome = Genome(nodes, connections)
+
+      val resultConns: List[ConnectionGene] =
+        List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 1.0, enabled = true),
+          ConnectionGene(2, 4, 1.0, enabled = true), ConnectionGene(4, 3, 1.0, enabled = true),
+          ConnectionGene(2, 3, 0.7, enabled = true), ConnectionGene(2, 3, 0.5, enabled = true))
 
       val resultNodes: Map[Int, NodeGene] =
         Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, HiddenGene(0.4)))
