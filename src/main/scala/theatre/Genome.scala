@@ -74,7 +74,7 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
     case None => this
   }
 
-  def generateNewNode(): Genome = {
+  def mutateRandomNode(): Genome = {
     val connectionToSplitIndex: Int = randomizer.nextInt(numberOfActiveConnections)
 
     val connectionToSplit: ConnectionGene = activeConnections(connectionToSplitIndex)
