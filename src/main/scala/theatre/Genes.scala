@@ -50,4 +50,7 @@ object Genes {
 
   final case class WrongConnectionGene(private val msg: String = "", private val cause: Throwable = None.orNull)
     extends Exception(msg, cause)
+
+  final case class UnknownNodeGene(private val msg: String = "", private val cause: Throwable = None.orNull)
+    extends Exception(msg, cause)
 }
