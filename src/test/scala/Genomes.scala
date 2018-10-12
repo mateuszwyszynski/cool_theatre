@@ -467,6 +467,30 @@ class Genomes extends Matchers
       genome.addConnectionBetween(2, 3, 0.5) should equal(resultGenome)
     }
 
+    "create a new connection between hidden node as input and sensor node as output and " +
+      "do not change sensor node's class" in {
+      val connections: List[ConnectionGene] =
+        List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 1.0, enabled = false),
+          ConnectionGene(2, 4, 1.0, enabled = true), ConnectionGene(4, 3, 1.0, enabled = true))
+
+      val nodes: Map[Int, NodeGene] =
+        Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, HiddenGene(0.4)))
+
+      val genome: Genome = Genome(nodes, connections)
+
+      val resultConns: List[ConnectionGene] =
+        List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 1.0, enabled = false),
+          ConnectionGene(2, 4, 1.0, enabled = true), ConnectionGene(4, 3, 1.0, enabled = true),
+          ConnectionGene(4, 1, 0.5, enabled = true))
+
+      val resultNodes: Map[Int, NodeGene] =
+        Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, HiddenGene(0.4)))
+
+      val resultGenome: Genome = Genome(resultNodes, resultConns)
+
+      genome.addConnectionBetween(4, 1, 0.5) should equal(resultGenome)
+    }
+
     "throw a WrongConnectionGene exception" when {
       "specified input is wrong" in {
         val connections: List[ConnectionGene] =
