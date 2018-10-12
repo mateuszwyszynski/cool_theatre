@@ -1,6 +1,6 @@
 package theatre
 
-import akka.actor._
+import akka.actor.{Props, Actor, ActorLogging}
 import theatre.Neurone._
 import theatre.VectorTools._
 

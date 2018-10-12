@@ -1,9 +1,9 @@
 package theatre
 
-import akka.actor._
+import akka.actor.{Props, ActorRef, Actor, ActorLogging}
 import theatre.CPPNQuery.Result
 import theatre.ParameterNode.Parameter
-import theatre.SensorNode._
+import theatre.SensorNode.{Input, AddOutputNode}
 
 object SensorNode {
   def props(procFun: Double => Double): Props = Props(new SensorNode(procFun))

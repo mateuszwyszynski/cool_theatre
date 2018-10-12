@@ -7,7 +7,7 @@ import theatre.CPPNQuery.Result
 import theatre.ParameterNode.Parameter
 import theatre.SensorNode.{AddOutputNode, Input}
 import theatre.VectorTools.{Point, sigmoidalFunction}
-import Genes._
+import Genes.{NodeGene, SensorGene, OutputGene, HiddenGene, ParameterGene}
 
 object CPPNQuery {
   def props(genome: Genome, stemCellID: String): Props =

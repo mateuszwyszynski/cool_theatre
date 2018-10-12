@@ -1,9 +1,9 @@
 package theatre
 
-import akka.actor._
+import akka.actor.{Props, Actor, ActorLogging, ActorRef, PoisonPill}
 import theatre.Brain.{Create, KillCPPNQuery}
-import theatre.CPPN._
-import theatre.VectorTools._
+import theatre.CPPN.StemCellReadyToUse
+import theatre.VectorTools.Point
 
 object CPPN {
   def props(boundaryFunction: Point => Boolean, genome: Genome): Props =

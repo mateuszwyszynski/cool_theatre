@@ -1,7 +1,7 @@
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
-import theatre.VectorTools._
-import theatre._
-import Genes._
+import theatre.GenomeOperations.{createConnections, createBaseNodes, crossOverGenomesAt, determineNodes}
+import theatre.{Genes, Genome}
+import Genes.{ConnectionGene, NodeGene, SensorGene, OutputGene, HiddenGene, ParameterGene, WrongConnectionGene}
 
 class Genomes extends Matchers
   with WordSpecLike

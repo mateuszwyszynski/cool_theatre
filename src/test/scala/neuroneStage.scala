@@ -3,10 +3,11 @@ import akka.testkit.{TestKit, TestProbe}
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 import theatre.Brain.{CheckStemCells, Create}
 import theatre.CPPN.StemCellReadyToUse
-import theatre.Neurone._
-import theatre.VectorTools._
-import theatre._
-import Genes._
+import theatre.Neurone.{EstablishConnection, Signal, LookForConnections, LookingForConnections}
+import theatre.VectorTools.{Point, projectOnSegment, sigmoidalFunction, norm, normalize, scalarProduct, subtract}
+import theatre.{CellType, Genome, Neurone, CPPN, Brain, CheckerCell, OutputCell, NeuroneCell, StemCell, VectorTools}
+import theatre.GenomeOperations.{createConnections, createBaseNodes, sortByReward}
+import theatre.Genes.{NodeGene, SensorGene, OutputGene, ConnectionGene}
 
 class neuroneStage() extends TestKit(ActorSystem("MySpec"))
   with Matchers

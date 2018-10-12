@@ -2,8 +2,9 @@ package theatre
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import theatre.Brain.CheckStemCells
-import theatre.VectorTools._
-import theatre.Neurone._
+import theatre.VectorTools.{Point, segmentIntersectsBall, add}
+import theatre.Neurone.{Signal, shouldFire, EstablishConnection, LookForConnections, LookingForConnections,
+  updateNeuroneState}
 
 object Checker {
   def props(

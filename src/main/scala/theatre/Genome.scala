@@ -1,7 +1,7 @@
 package theatre
 
-import Genes._
-import VectorTools.{crossOverGenomesAt, determineNodes}
+import Genes.{NodeGene, ConnectionGene, HiddenGene, WrongConnectionGene}
+import GenomeOperations.{crossOverGenomesAt, determineNodes}
 
 object Genome {
   def apply(nodeGenes: Map[Int, NodeGene], connectionGenes: List[ConnectionGene]): Genome =

@@ -1,11 +1,11 @@
 package theatre
 
-import akka.actor._
-import theatre.CPPN._
-import theatre.Stem._
-import theatre.Brain._
+import akka.actor.{Props, Actor, ActorLogging}
+import theatre.CPPN.StemCellReadyToUse
+import theatre.Stem.ReportStatus
+import theatre.Brain.{Create, KillCPPNQuery, CheckStemCells}
 import theatre.Neurone.{LookForConnections, LookingForConnections}
-import theatre.VectorTools._
+import theatre.VectorTools.Point
 
 object Stem{
   def props(

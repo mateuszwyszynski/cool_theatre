@@ -1,7 +1,7 @@
 package theatre
 
-import akka.actor._
-import theatre.VectorTools._
+import akka.actor.{Props, Actor, ActorRef, ActorLogging}
+import theatre.VectorTools.{Point, segmentIntersectsBall, add}
 
 object Neurone {
   def props(

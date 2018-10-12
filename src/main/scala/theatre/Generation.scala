@@ -2,7 +2,8 @@ package theatre
 
 import akka.actor.{Actor, ActorLogging, Props}
 import theatre.Generation.{Evaluate, Evaluated}
-import theatre.VectorTools.{Point, sortByReward}
+import theatre.VectorTools.Point
+import theatre.GenomeOperations.sortByReward
 
 object Generation {
   def props(): Props = Props(new Generation())

@@ -1,6 +1,6 @@
 package theatre
 
-import VectorTools._
+import VectorTools.Point
 
 
 trait CellType {
