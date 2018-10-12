@@ -211,7 +211,7 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
   }
 
   "CPPN actor" should {
-    "create a checker cell (NOT ALWAYS)" ignore {
+    "create a checker cell or neurone cell" in {
       val probe = TestProbe()
 
       val cppnActor = probe.childActorOf(CPPN.props(cubeInterior, genome), "CPPNActor")
@@ -220,18 +220,7 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
 
       val response = probe.expectMsgType[Create]
 
-      response.cell.isInstanceOf[CheckerCell] should equal(true)
-    }
-    "create a neurone cell (NOT ALWAYS)" ignore {
-      val probe = TestProbe()
-
-      val cppnActor = probe.childActorOf(CPPN.props(cubeInterior, genome), "CPPNActor")
-
-      cppnActor.tell(StemCellReadyToUse((2.0, 2.0, 2.0), 1.0, "ProbeStemCell1"), probe.ref)
-
-      val response = probe.expectMsgType[Create]
-
-      response.cell.isInstanceOf[CheckerCell] should equal(true)
+      response.cell.isInstanceOf[CheckerCell] || response.cell.isInstanceOf[NeuroneCell] should equal(true)
     }
     "create no neurone" in {
       val probe = TestProbe()
@@ -242,24 +231,6 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
 
       probe.expectNoMessage
     }
-  }
-
-  "General test" ignore {
-    val probe = TestProbe()
-
-    val brainActor = system.actorOf(Brain.props(genome, cubeInterior), "FirstBrain")
-
-    brainActor ! Create(StemCell((0.5, 0.5, 0.5), 100), "FirstStemCell")
-
-    Thread.sleep(100)
-
-    brainActor ! CheckStemCells()
-
-    Thread.sleep(100)
-
-    brainActor.tell(LookingForConnections((0.5, 0.5, 0.0), (0.0, 0.0, 0.5)), probe.ref)
-
-    probe.expectMsgType[EstablishConnection]
   }
 
   "General test - check the log" in {
