@@ -1,7 +1,7 @@
 package theatre
 
 import Genes._
-import VectorTools.crossOverGenomesAt
+import VectorTools.{crossOverGenomesAt, determineNodes}
 
 object Genome {
   def apply(nodeGenes: Map[Int, NodeGene], connectionGenes: List[ConnectionGene]): Genome =
@@ -96,12 +96,21 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
             ConnectionGene(input, output, weight, enabled = true)) :::
             connectionGenes.drop(disabledConnectionIndex + 1)
 
-          Genome(nodeGenes, connections)
+          val updatedNodeGenes: Map[Int, NodeGene] =
+            determineNodes(connections, Map.empty[Int, NodeGene], nodeGenes)
+
+          Genome(updatedNodeGenes, connections)
         }
       case None =>
         (nodeGenes.get(input), nodeGenes.get(output)) match {
           case (Some(_), Some(_)) =>
-            Genome(nodeGenes, connectionGenes :+ ConnectionGene(input, output, weight, enabled = true))
+            val connections: List[ConnectionGene] =
+              connectionGenes :+ ConnectionGene(input, output, weight, enabled = true)
+
+            val updatedNodeGenes: Map[Int, NodeGene] =
+              determineNodes(connections, Map.empty[Int, NodeGene], nodeGenes)
+
+            Genome(updatedNodeGenes, connections)
           case (None, Some(_)) =>
             throw WrongConnectionGene("No node found within the genome for the specified input.")
           case (Some(_), None) =>
