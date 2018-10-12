@@ -144,4 +144,8 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
 
     crossOverGenomesAt(this, genome, split)
   }
+
+  def mutate(): Genome = {
+    if(randomizer.nextDouble() >= 0.5) this.mutateRandomNode() else mutateRandomConnection()
+  }
 }
