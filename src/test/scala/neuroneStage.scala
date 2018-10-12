@@ -234,6 +234,28 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
     }
   }
 
+  "Stem Cell" should {
+    "not create more neurones than it has resources" in {
+      val brain = system.actorOf(Brain.props(genome, cubeInterior), "ResourceBrain")
+
+      brain ! Create(StemCell((0.5, 0.5, 0.0), 0), "")
+      brain ! Create(StemCell((0.25, 0.25, 0.25), 1), "")
+
+      Thread.sleep(100)
+
+      brain ! Create(NeuroneCell((0.2, 0.2, 0.2), (0.1, 0.1, 0.1), 0.15, sigmoidalFunction, 0.4), "StemCell1")
+      brain ! Create(NeuroneCell((0.8, 0.8, 0.8), (0.1, 0.1, 0.1), 0.15, sigmoidalFunction, 0.4), "StemCell1")
+
+      val probe = TestProbe()
+
+      Thread.sleep(100)
+
+      brain.tell(LookingForConnections((0.8, 0.8, 0.9), (0.0, 0.0, -0.05)), probe.ref)
+
+      probe.expectNoMessage
+    }
+  }
+
   "General test - check the log" in {
     val brain = system.actorOf(Brain.props(genome, cubeInterior), "RandomBrain")
 
