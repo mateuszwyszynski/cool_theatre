@@ -121,59 +121,22 @@ case class Genome(nodeGenes: Map[Int, NodeGene], connectionGenes: List[Connectio
     }
   }
 
-  def generateNewConnection(): Genome = {
-    if(numberOfActiveConnections == numberOfNodes*(numberOfNodes-1)/2) {
-      this.generateNewNode()
-    } else {
-      val nodeNumbers = 1 to numberOfNodes
+  def mutateRandomConnection(): Genome = {
+    val nodeNumbers = 1 to numberOfNodes
 
-      val fullGraph: Seq[(Int, Int)] = nodeNumbers.flatMap{ y =>
-        for {
-          x <- 1 to numberOfNodes if x != y
-        } yield {
-          (y, x)
-        }
+    val fullGraph: Seq[(Int, Int)] = nodeNumbers.flatMap{ y =>
+      for {
+        x <- 1 to numberOfNodes if x != y
+      } yield {
+        (y, x)
       }
-
-      def alreadyHasThisGene(edge: (Int, Int), connectionGenes: List[ConnectionGene]): Boolean =
-        connectionGenes match {
-          case x :: xs =>
-            (x.input == edge._1 && x.output == edge._2) || alreadyHasThisGene(edge, xs)
-          case Nil => false
-        }
-
-      val possibleNewConnections: Seq[(Int, Int)] =
-        fullGraph.filter(x => !alreadyHasThisGene(x, connectionGenes))
-
-      val newConnectionIndex: Int = randomizer.nextInt(possibleNewConnections.length)
-
-      val newConnection: (Int, Int) = possibleNewConnections(newConnectionIndex)
-
-      val presentConnGene: Option[ConnectionGene] =
-        connectionGenes.find(x => x.input == newConnection._1 && x.output == newConnection._2)
-
-      val newConnectionGenes: List[ConnectionGene] = presentConnGene match {
-        case Some(cg) => connectionGenes.map(x => x.disableIfLike(cg))
-        case None => connectionGenes :+ new ConnectionGene(
-          newConnection._1,
-          newConnection._2,
-          weight = randomizer.nextDouble(),
-          enabled = true
-        )
-      }
-
-      val updatedNodes: Map[Int, NodeGene] = nodeGenes.get(newConnection._2) match {
-        case Some(node) => node match {
-          case ParameterGene(b) => nodeGenes.updated(newConnection._2, HiddenGene(b))
-          case _ => nodeGenes
-        }
-        case None =>
-          println("Unexpected behaviour: connection output is an unknown node.")
-          nodeGenes
-      }
-
-      Genome(updatedNodes, newConnectionGenes)
     }
+
+    val randomConnectionIndex: Int = randomizer.nextInt(fullGraph.length)
+
+    val randomlyDrawnConnection: (Int, Int) = fullGraph(randomConnectionIndex)
+
+    this.addConnectionBetween(randomlyDrawnConnection._1, randomlyDrawnConnection._2, randomizer.nextDouble())
   }
 
   def mateWith(genome: Genome): Genome = {
