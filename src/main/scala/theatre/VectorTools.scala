@@ -221,9 +221,9 @@ object VectorTools {
               case (None, None) =>
                 (parentNodes.get(c.input), parentNodes.get(c.output)) match {
                   case (Some(i), Some(o)) => acc.updated(c.input, i).updated(c.output, o)
-                  case (None, Some(o)) =>
+                  case (None, Some(_)) =>
                     throw UnknownNodeGene("Unknown connection input.")
-                  case (Some(i), None) =>
+                  case (Some(_), None) =>
                     throw UnknownNodeGene("Unknown connection output.")
                   case (None, None) =>
                     throw UnknownNodeGene("Unknown connection input and output")

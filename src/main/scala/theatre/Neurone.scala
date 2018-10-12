@@ -67,22 +67,18 @@ class Neurone(
         case Some(outNeurones) =>
           val wasFired =
             shouldFire(
-              neuroneState.map{ case (inpNeurone: ActorRef, lastSignal: Double) => lastSignal},
+              neuroneState.map{ case (_: ActorRef, lastSignal: Double) => lastSignal},
               firingThreshold,
               processingFunction
             )
 
-          wasFired match {
-            case true =>
-              log.info("Neurone was fired. Propagating signal.")
-              propagateSignalToOutputNeurones(outNeurones, processingFunction(neuroneState.map(x => x._2).sum))
-              neuroneState = Nil
-            case false =>
-              //log.info("Neurone was not fired.")
-          }
-        case None => {
+          if(wasFired) {
+            log.info("Neurone was fired. Propagating signal.")
+            propagateSignalToOutputNeurones(outNeurones, processingFunction(neuroneState.map(x => x._2).sum))
+            neuroneState = Nil
+          } else {}
+        case None =>
           log.info(s"No output neurones. Nowhere to propagate signal = $value")
-        }
       }
 
     case LookingForConnections(pos, axonCoor) =>

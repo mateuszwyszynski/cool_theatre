@@ -41,12 +41,12 @@ class Brain(
 
   var stemCellNumber: BigInt = 0
 
-  val brainsCPPN = context.actorOf(CPPN.props(boundaryFunction, genome))
+  val brainsCPPN: ActorRef = context.actorOf(CPPN.props(boundaryFunction, genome))
 
   override def receive: Receive = {
-    case msg @ Create(cell, stemCellID) => {
+    case msg @ Create(cell, stemCellID) =>
       cell match {
-        case stem: StemCell => {
+        case stem: StemCell =>
           val stemID = "StemCell" + stemCellNumber
           stemCellNumber += 1
           val stemCellActor = context.actorOf(Stem.props(stem.position, stem.neuroneMaterial, stemID), stemID)
@@ -54,35 +54,29 @@ class Brain(
           log.info("Created " + stemID)
 
           stemCellToActorRef += stemID -> stemCellActor
-          }
-        case neurone: NeuroneCell =>
+        case NeuroneCell(_, _, _, _, _) =>
           stemCellToActorRef.get(stemCellID) match {
             case Some(stem) => stem ! msg
             case None => log.info("Unknown stem cell ID.")
           }
-        case output: OutputCell => {
+        case OutputCell(_, _) =>
           stemCellToActorRef.get(stemCellID) match {
             case Some(stem) => stem ! msg
             case None => log.info("Unknown stem cell ID.")
           }
-        }
-        case checker: CheckerCell =>
+        case CheckerCell(_, _, _, _) =>
           stemCellToActorRef.get(stemCellID) match {
             case Some(stem) => stem ! msg
             case None => log.info("Unknown stem cell ID.")
           }
       }
-    }
 
-    case msg @ LookingForConnections(pos, axCor) => {
-      //val connectionMakerActor = context.actorOf(ConnectionMaker.props(pos, axCor, stemCellToActorRef))
-
+    case msg: LookingForConnections =>
       for {
         stemCellActor <- stemCellToActorRef.values
       } yield {
         stemCellActor.forward(msg)
       }
-    }
 
     case msg: LookForConnections =>
       for {
@@ -91,20 +85,17 @@ class Brain(
         stemCellActor ! msg
       }
 
-    case msg @ StemCellReadyToUse(_, _, _) => {
+    case msg @ StemCellReadyToUse(_, _, _) =>
       brainsCPPN ! msg
-    }
 
-    case CheckStemCells() => {
+    case CheckStemCells() =>
       for {
         stemCellActor <- stemCellToActorRef.values
       } yield {
         stemCellActor ! ReportStatus()
       }
-    }
 
-    case msg: KillCPPNQuery => {
+    case msg: KillCPPNQuery =>
       brainsCPPN ! msg
-    }
   }
 }
