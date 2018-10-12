@@ -239,6 +239,22 @@ class Genomes extends Matchers
     }
   }
 
+  "Nodes determined from list of conneciton genes" should {
+    "contain ParameterNode" in {
+      val connections: List[ConnectionGene] =
+        List(ConnectionGene(1, 3, 1.0, enabled = true), ConnectionGene(2, 3, 1.0, enabled = false),
+          ConnectionGene(2, 4, 1.0, enabled = false), ConnectionGene(4, 3, 1.0, enabled = true))
+
+      val parentNodes: Map[Int, NodeGene] =
+        Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, HiddenGene(0.4)))
+
+      val resultNodes: Map[Int, NodeGene] =
+        Map((1, SensorGene()), (2, SensorGene()), (3, OutputGene(0.7)), (4, ParameterGene(0.4)))
+
+      determineNodes(connections, Map.empty[Int, NodeGene], parentNodes) should equal(resultNodes)
+    }
+  }
+
   "Adding a new connection gene to a genome" should {
     "add new connection" in {
       val connections: List[ConnectionGene] =
