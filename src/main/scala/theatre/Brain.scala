@@ -4,6 +4,7 @@ import akka.actor._
 import theatre.Brain._
 import theatre.CPPN.StemCellReadyToUse
 import theatre.Neurone.{LookForConnections, LookingForConnections}
+import theatre.Output.EnterTheMatrix
 import theatre.Stem.ReportStatus
 import theatre.VectorTools._
 
@@ -44,6 +45,8 @@ class Brain(
   val brainsCPPN: ActorRef = context.actorOf(CPPN.props(boundaryFunction, genome))
 
   override def receive: Receive = {
+    case msg: EnterTheMatrix =>
+      stemCellToActorRef("StemCell0") ! msg
     case msg @ Create(cell, stemCellID) =>
       cell match {
         case stem: StemCell =>
