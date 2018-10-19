@@ -31,14 +31,10 @@ class Stem(
 
   def receive: Receive = {
     case msg: EnterTheMatrix =>
-      log.info("Stem entering the matrix.")
-
       context.child("Output1") match {
         case Some(output) =>
-          log.info("You can call it magic")
           output ! msg
         case None =>
-          log.info("You can call it truth")
       }
 
     case Create(cell, _) =>

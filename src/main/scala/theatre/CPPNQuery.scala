@@ -70,8 +70,6 @@ class CPPNQuery(
   val outputNodesNumbers: Map[ActorRef, Int] =
     nodes.filter(x => x._2._2.isInstanceOf[OutputGene]).mapValues(_._1).map(_.swap)
 
-  val simpleMap: Map[Int, String] = Map((1, "one"), (2, "two"), (3, "three"), (4, "four"))
-
   for {
     conn <- genome.connections()
   } yield {
@@ -125,11 +123,9 @@ class CPPNQuery(
           (collectedOutputs(10), collectedOutputs(11), collectedOutputs(12))
         val procFun: Double => Double = sigmoidalFunction
         val threshold: Double = collectedOutputs(14)
-        if(collectedOutputs(5) <= 0.75) {
-          log.info("New neurone cell - pos: {}, ax: {}, inpR: {}, thr: {}", position,axCoor,inpRad,threshold)
+        if(collectedOutputs(5) >= 0.75) {
           context.parent ! Create(NeuroneCell(position, axCoor, inpRad, procFun, threshold), stemCellID)
         } else {
-          log.info("New checker cell - pos: {}, ax: {}, inpR: {}, thr: {}", position,axCoor,inpRad,threshold)
           context.parent ! Create(CheckerCell(position, inpRad, procFun, threshold), stemCellID)
         }
         collectedOutputs = Map.empty[Int, Double]

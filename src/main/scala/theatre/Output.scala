@@ -21,7 +21,6 @@ class Output(position: Point, inputRadius: Double) extends Actor with ActorLoggi
   def insideTheMatrix(reality: ActorRef): Receive = {
     case LookingForConnections(inpPos, axCoor) =>
       if(segmentIntersectsBall(inpPos, add(inpPos, axCoor), position, inputRadius)) {
-        log.info("New input neurone:" + sender + "Sending my coordinates.")
         sender ! EstablishConnection()
       } else {}
     case Signal(value) =>

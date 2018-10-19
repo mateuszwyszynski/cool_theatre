@@ -27,8 +27,6 @@ class Checker(
 
   def receive: Receive = {
     case Signal(value) =>
-      log.info(s"Signal = $value received.")
-
       neuroneState = updateNeuroneState(value, sender(), neuroneState)
 
       val wasFired =
@@ -39,20 +37,14 @@ class Checker(
         )
 
       if(wasFired) {
-        log.info("Checker was fired. Check stem cells.")
         context.parent ! CheckStemCells()
         neuroneState = Nil
-      } else {
-          //log.info("Checker neurone wasn't fired.")
-      }
+      } else {}
 
     case LookingForConnections(pos, axonCoor) =>
       if (segmentIntersectsBall(pos, add(pos,axonCoor), neuroneCoordinates, inputRadius) && sender != self) {
-        log.info("Recognized an input neurone:" + sender + "Sending my coordinates.")
         sender() ! EstablishConnection()
-      } else {
-        log.info("Shouldn't connect to this neurone")
-      }
+      } else {}
 
     case LookForConnections() =>
   }

@@ -59,8 +59,6 @@ class Neurone(
 
   def receive: Receive = {
     case Signal(value) =>
-      log.info(s"Signal = $value received.")
-
       neuroneState = updateNeuroneState(value, sender(), neuroneState)
 
       outputNeurones match {
@@ -73,21 +71,16 @@ class Neurone(
             )
 
           if(wasFired) {
-            log.info("Neurone was fired. Propagating signal.")
             propagateSignalToOutputNeurones(outNeurones, processingFunction(neuroneState.map(x => x._2).sum))
             neuroneState = Nil
           } else {}
         case None =>
-          log.info(s"No output neurones. Nowhere to propagate signal = $value")
       }
 
     case LookingForConnections(pos, axonCoor) =>
     if (segmentIntersectsBall(pos, add(pos,axonCoor), neuroneCoordinates, inputRadius) && sender != self) {
-      log.info("Recognized an input neurone:" + sender + "Sending my coordinates.")
       sender() ! EstablishConnection()
-    } else {
-      //log.info("Shouldn't connect to this neurone")
-    }
+    } else {}
 
     case EstablishConnection() => outputNeurones match {
       case Some(outNeurones) =>
