@@ -5,7 +5,6 @@ import theatre.CPPN.StemCellReadyToUse
 import theatre.Stem.ReportStatus
 import theatre.Brain.{Create, KillCPPNQuery, CheckStemCells}
 import theatre.Neurone.{LookForConnections, LookingForConnections}
-import theatre.Output.EnterTheMatrix
 import theatre.VectorTools.Point
 
 object Stem{
@@ -30,13 +29,6 @@ class Stem(
   var outputsNumber: Int = 1
 
   def receive: Receive = {
-    case msg: EnterTheMatrix =>
-      context.child("Output1") match {
-        case Some(output) =>
-          output ! msg
-        case None =>
-      }
-
     case Create(cell, _) =>
       if(resources <= 0) {
         context.parent ! KillCPPNQuery(stemCellID)
@@ -62,7 +54,8 @@ class Stem(
             neuroneActor.tell(LookForConnections(), context.parent)
 
           case output: OutputCell =>
-            context.actorOf(Output.props(output.position, output.inputRadius), "Output" + outputsNumber)
+            context.actorOf(Output.props(output.position, output.inputRadius, output.reality),
+              "Output" + outputsNumber)
             outputsNumber += 1
 
           case checker: CheckerCell =>

@@ -253,13 +253,15 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
   }
 
   "General test - check the log" in {
+    val probe = TestProbe()
+
     val brain = system.actorOf(Brain.props(genome, cubeInterior), "RandomBrain")
 
     brain ! Create(StemCell((0.5, 0.5, 0.0), 0), "StemCell0")
 
-    brain ! Create(OutputCell((0.5, 0.5, -0.1), 0.6), "StemCell0")
-    brain ! Create(OutputCell((0.25, 0.5, -0.2), 0.4), "StemCell0")
-    brain ! Create(OutputCell((0.75, 0.5, -0.1), 0.4), "StemCell0")
+    brain ! Create(OutputCell((0.5, 0.5, -0.1), 0.6, probe.ref), "StemCell0")
+    brain ! Create(OutputCell((0.25, 0.5, -0.2), 0.4, probe.ref), "StemCell0")
+    brain ! Create(OutputCell((0.75, 0.5, -0.1), 0.4, probe.ref), "StemCell0")
 
     Thread.sleep(100)
 

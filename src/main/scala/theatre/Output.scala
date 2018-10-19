@@ -2,23 +2,16 @@ package theatre
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import theatre.Neurone._
-import theatre.Output.EnterTheMatrix
 import theatre.Reality.Action
 import theatre.VectorTools._
 
 object Output {
-  def props(position: Point, inputRadius: Double): Props = Props(new Output(position, inputRadius))
-
-  final case class EnterTheMatrix(reality: ActorRef)
+  def props(position: Point, inputRadius: Double, reality: ActorRef): Props =
+    Props(new Output(position, inputRadius, reality))
 }
 
-class Output(position: Point, inputRadius: Double) extends Actor with ActorLogging {
+class Output(position: Point, inputRadius: Double, reality: ActorRef) extends Actor with ActorLogging {
   def receive: Receive = {
-    case EnterTheMatrix(reality) =>
-      context.become(insideTheMatrix(reality))
-  }
-
-  def insideTheMatrix(reality: ActorRef): Receive = {
     case LookingForConnections(inpPos, axCoor) =>
       if(segmentIntersectsBall(inpPos, add(inpPos, axCoor), position, inputRadius)) {
         sender ! EstablishConnection()

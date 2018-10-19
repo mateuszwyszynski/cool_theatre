@@ -1,6 +1,7 @@
 package theatre
 
 import VectorTools.Point
+import akka.actor.ActorRef
 
 
 trait CellType {
@@ -29,5 +30,6 @@ case class CheckerCell(
 
 case class OutputCell(
                        position: Point,
-                       inputRadius: Double
+                       inputRadius: Double,
+                       reality: ActorRef
                      ) extends CellType
