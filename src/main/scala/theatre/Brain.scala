@@ -26,6 +26,8 @@ object Brain {
                            stemCellID: String
                          )
 
+  final case class CreateStem(position: Point, resources: Double, stemID: String)
+
   final case class CheckStemCells()
 
   final case class KillCPPNQuery(stemCellID: String)
@@ -39,7 +41,7 @@ class Brain(
 
   var takenPositions: List[Point] = Nil
 
-  var stemCellNumber: BigInt = 0
+  var stemCellNumber: BigInt = 1
 
   val brainsCPPN: ActorRef = context.actorOf(CPPN.props(boundaryFunction, genome))
 
@@ -97,5 +99,10 @@ class Brain(
 
     case msg: KillCPPNQuery =>
       brainsCPPN ! msg
+
+    case CreateStem(position, resources, stemID) =>
+      val stemActor: ActorRef = context.actorOf(Stem.props(position, resources, stemID))
+
+      stemCellToActorRef += stemID -> stemActor
   }
 }

@@ -1,14 +1,13 @@
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{TestKit, TestProbe}
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
-import theatre.Brain.{CheckStemCells, Create}
+import theatre.Brain.{CheckStemCells, Create, CreateStem}
 import theatre.CPPN.StemCellReadyToUse
-import theatre.Neurone.{EstablishConnection, Signal, LookForConnections, LookingForConnections}
-import theatre.VectorTools.{Point, projectOnSegment, sigmoidalFunction, norm, normalize, scalarProduct,
-  cubeInterior, subtract}
-import theatre.{CellType, Genome, Neurone, CPPN, Brain, CheckerCell, OutputCell, NeuroneCell, StemCell, VectorTools}
-import theatre.GenomeOperations.{createConnections, createBaseNodes, sortByReward}
-import theatre.Genes.{NodeGene, SensorGene, OutputGene, ConnectionGene}
+import theatre.Neurone.{EstablishConnection, LookForConnections, LookingForConnections, Signal}
+import theatre.VectorTools.{Point, cubeInterior, norm, normalize, projectOnSegment, scalarProduct, sigmoidalFunction, subtract}
+import theatre.{Brain, CPPN, CellType, CheckerCell, Genome, Neurone, NeuroneCell, OutputCell, StemCell, VectorTools}
+import theatre.GenomeOperations.{createBaseNodes, createConnections, sortByReward}
+import theatre.Genes.{ConnectionGene, NodeGene, OutputGene, SensorGene}
 
 class neuroneStage() extends TestKit(ActorSystem("MySpec"))
   with Matchers
@@ -257,11 +256,11 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
 
     val brain = system.actorOf(Brain.props(genome, cubeInterior), "RandomBrain")
 
-    brain ! Create(StemCell((0.5, 0.5, 0.0), 0), "StemCell0")
+    brain ! CreateStem((0.5, 0.5, 0.0), 0, "Hands")
 
-    brain ! Create(OutputCell((0.5, 0.5, -0.1), 0.6, probe.ref), "StemCell0")
-    brain ! Create(OutputCell((0.25, 0.5, -0.2), 0.4, probe.ref), "StemCell0")
-    brain ! Create(OutputCell((0.75, 0.5, -0.1), 0.4, probe.ref), "StemCell0")
+    brain ! Create(OutputCell((0.5, 0.5, -0.1), 0.6, probe.ref), "Hands")
+    brain ! Create(OutputCell((0.25, 0.5, -0.2), 0.4, probe.ref), "Hands")
+    brain ! Create(OutputCell((0.75, 0.5, -0.1), 0.4, probe.ref), "Hands")
 
     Thread.sleep(100)
 
