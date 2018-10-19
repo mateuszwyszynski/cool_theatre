@@ -4,7 +4,8 @@ import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 import theatre.Brain.{CheckStemCells, Create}
 import theatre.CPPN.StemCellReadyToUse
 import theatre.Neurone.{EstablishConnection, Signal, LookForConnections, LookingForConnections}
-import theatre.VectorTools.{Point, projectOnSegment, sigmoidalFunction, norm, normalize, scalarProduct, subtract}
+import theatre.VectorTools.{Point, projectOnSegment, sigmoidalFunction, norm, normalize, scalarProduct,
+  cubeInterior, subtract}
 import theatre.{CellType, Genome, Neurone, CPPN, Brain, CheckerCell, OutputCell, NeuroneCell, StemCell, VectorTools}
 import theatre.GenomeOperations.{createConnections, createBaseNodes, sortByReward}
 import theatre.Genes.{NodeGene, SensorGene, OutputGene, ConnectionGene}
@@ -14,11 +15,6 @@ class neuroneStage() extends TestKit(ActorSystem("MySpec"))
   with WordSpecLike
   with BeforeAndAfter {
   def sumList(list: List[Double]): Double = list.sum
-  def cubeInterior(position: Point): Boolean = {
-    position._1 <= 1 && position._1 >= 0 &&
-      position._2 <= 1 && position._2 >= 0 &&
-      position._3 <= 1 && position._3 >= 0
-  }
 
   def deterministicCellType(
                          position: Point,

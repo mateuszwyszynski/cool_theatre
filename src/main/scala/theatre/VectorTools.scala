@@ -92,5 +92,11 @@ object VectorTools {
     (tuple1._1 * tuple2._1, tuple1._2 * tuple2._2, tuple1._3 * tuple2._3)
   }
 
+  def cubeInterior(position: Point): Boolean = {
+    position._1 <= 1 && position._1 >= 0 &&
+      position._2 <= 1 && position._2 >= 0 &&
+      position._3 <= 1 && position._3 >= 0
+  }
+
   def sigmoidalFunction(x: Double): Double = 1 / (1 + math.exp(-x))
 }
