@@ -57,6 +57,7 @@ class Stem(
             context.actorOf(Output.props(output.position, output.inputRadius, output.reality),
               "Output" + outputsNumber)
             outputsNumber += 1
+            resources -= 1
 
           case checker: CheckerCell =>
             val neuroneActor =
