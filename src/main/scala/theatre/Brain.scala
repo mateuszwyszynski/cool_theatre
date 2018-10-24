@@ -101,7 +101,7 @@ class Brain(
       brainsCPPN ! msg
 
     case CreateStem(position, resources, stemID) =>
-      val stemActor: ActorRef = context.actorOf(Stem.props(position, resources, stemID))
+      val stemActor: ActorRef = context.actorOf(Stem.props(position, resources, stemID), stemID)
 
       stemCellToActorRef += stemID -> stemActor
   }
